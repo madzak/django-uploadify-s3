@@ -1,6 +1,6 @@
 from distutils.core import setup
 
-version = '0.1'
+version = '0.1.1'
 
 setup(name='django-uploadify-s3',
       version=version,
@@ -9,7 +9,7 @@ setup(name='django-uploadify-s3',
       author_email='sbc@charrington.com',
       url='https://github.com/sbc/django-uploadify-s3',
       packages=['uploadify_s3', 'uploadify_s3.templatetags'],
-      package_data = {'uploadify_s3': ['templates/*.html']},
+      package_data = {'uploadify_s3': ['templates/*.html', 'static/*']},
       classifiers=['Development Status :: 4 - Beta',
                    'Environment :: Web Environment',
                    'Framework :: Django',

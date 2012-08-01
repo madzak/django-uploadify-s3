@@ -17,18 +17,18 @@ FILTERED_KEYS  = ('filename',)
 EXCLUDED_KEYS     = ('AWSAccessKeyId', 'policy', 'signature')
 
 # AWS Options
-ACCESS_KEY_ID       = getattr(settings, 'AWS_ACCESS_KEY_ID', None)
-SECRET_ACCESS_KEY   = getattr(settings, 'AWS_SECRET_ACCESS_KEY', None)
-BUCKET_NAME         = getattr(settings, 'AWS_BUCKET_NAME', None)
-SECURE_URLS         = getattr(settings, 'AWS_S3_SECURE_URLS', True)
-BUCKET_URL          = getattr(settings, 'AWS_BUCKET_URL', 'http://' if SECURE_URLS else 'https://' + BUCKET_NAME + '.s3.amazonaws.com')
-DEFAULT_ACL         = getattr(settings, 'AWS_DEFAULT_ACL', 'private')
-DEFAULT_KEY_PATTERN = getattr(settings, 'AWS_DEFAULT_KEY_PATTERN', '${filename}')
-DEFAULT_FORM_TIME   = getattr(settings, 'AWS_DEFAULT_FORM_LIFETIME', 36000) # 10 HOURS
+ACCESS_KEY_ID       = getattr(settings, 'UPLOADIFY_AWS_ACCESS_KEY_ID', None)
+SECRET_ACCESS_KEY   = getattr(settings, 'UPLOADIFY_AWS_SECRET_ACCESS_KEY', None)
+BUCKET_NAME         = getattr(settings, 'UPLOADIFY_AWS_BUCKET_NAME', None)
+SECURE_URLS         = getattr(settings, 'UPLOADIFY_AWS_S3_SECURE_URLS', True)
+BUCKET_URL          = getattr(settings, 'UPLOADIFY_AWS_BUCKET_URL', 'http://' if SECURE_URLS else 'https://' + BUCKET_NAME + '.s3.amazonaws.com')
+DEFAULT_ACL         = getattr(settings, 'UPLOADIFY_AWS_DEFAULT_ACL', 'private')
+DEFAULT_KEY_PATTERN = getattr(settings, 'UPLOADIFY_AWS_DEFAULT_KEY_PATTERN', '${filename}')
+DEFAULT_FORM_TIME   = getattr(settings, 'UPLOADIFY_AWS_DEFAULT_FORM_LIFETIME', 36000) # 10 HOURS
 
 # Defaults for required Uploadify options
-DEFAULT_CANCELIMG = settings.MEDIA_URL + "uploadify/cancel.png"
-DEFAULT_UPLOADER  = settings.MEDIA_URL + "uploadify/uploadify.swf"
+DEFAULT_CANCELIMG = settings.STATIC_URL + "uploadify/cancel.png"
+DEFAULT_UPLOADER  = settings.STATIC_URL + "uploadify/uploadify.swf"
 
 class UploadifyS3(object):
     """Uploadify for Amazon S3"""

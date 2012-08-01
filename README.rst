@@ -22,7 +22,7 @@ Requirements
 
 Download the Uploadify ZIP file and unzip it in your project. This
 application assumes the files will be located in an ``uploadify`` 
-directory within your MEDIA_URL directory.
+directory within your STATIC_URL directory.
 
 Note that Uploadify requires jQuery, and django-uploadify-s3 does not
 automatically include it. (To avoid conflicts.) You will need to 
