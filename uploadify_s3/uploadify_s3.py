@@ -8,13 +8,16 @@ import hmac
 import hashlib
 import json
 
-UPLOADIFY_OPTIONS = ('auto', 'buttonImg', 'buttonText', 'cancelImg',
-'checkScript', 'displayData', 'expressInstall', 'fileDataName', 'fileDesc',
-'fileExt', 'folder', 'height', 'hideButton', 'method', 'multi', 'queueID',
-'queueSizeLimit', 'removeCompleted', 'rollover', 'script','scriptAccess',
-'scriptData', 'simUploadLimit', 'sizeLimit', 'swf', 'uploader', 'width', 'wmode')
+UPLOADIFY_OPTIONS = ('auto', 'buttonClass', 'buttonCursor', 'buttonImage', 'buttonText',
+'checkExisting', 'debug', 'fileObjName', 'fileSizeLimit', 'fileTypeDesc', 'fileTypeExts',
+'formData', 'height', 'method', 'multi', 'overrideEvents', 'preventCaching', 'progressData',
+'queueID', 'queueSizeLimit', 'removeCompleted', 'removeTimeout', 'requeueErrors',
+'successTimeout', 'swf', 'uploader', 'uploadLimit', 'width')
 
-UPLOADIFY_METHODS = ('onAllComplete', 'onCancel', 'onCheck', 'onClearQueue', 'onComplete', 'onError', 'onInit', 'onOpen', 'onProgress', 'onQueueFull', 'onSelect', 'onSelectOnce', 'onSWFReady')
+UPLOADIFY_METHODS = ('onCancel', 'onClearQueue', 'onDestroy', 'onDialogClose', 'onDialogOpen',
+'onDisable', 'onEnable', 'onFallback', 'onInit', 'onQueueComplete', 'onSelect', 'onSelectError',
+'onSWFReady', 'onUploadComplete', 'onUploadError', 'onUploadProgress', 'onUploadStart',
+'onUploadSuccess')
 
 PASS_THRU_OPTIONS = ('folder', 'fileExt',)
 FILTERED_KEYS  = ('filename',)
@@ -31,7 +34,6 @@ DEFAULT_KEY_PATTERN = getattr(settings, 'UPLOADIFY_AWS_DEFAULT_KEY_PATTERN', '${
 DEFAULT_FORM_TIME   = getattr(settings, 'UPLOADIFY_AWS_DEFAULT_FORM_LIFETIME', 36000) # 10 HOURS
 
 # Defaults for required Uploadify options
-DEFAULT_CANCELIMG = settings.STATIC_URL + "uploadify/cancel.png"
 DEFAULT_SWF  = settings.STATIC_URL + "uploadify/uploadify.swf"
 
 class UploadifyS3(object):
@@ -44,9 +46,8 @@ class UploadifyS3(object):
         if any(True for key in self.options if key not in UPLOADIFY_OPTIONS + UPLOADIFY_METHODS):
             raise ImproperlyConfigured("Attempted to initialize with unrecognized option '%s'." % key)
 
-        _set_default_if_none(self.options, 'cancelImg', DEFAULT_CANCELIMG)
         _set_default_if_none(self.options, 'swf', DEFAULT_SWF)
-        _set_default_if_none(self.options, 'script', BUCKET_URL)
+        _set_default_if_none(self.options, 'uploader', BUCKET_URL)
 
         self.post_data = post_data
 
@@ -77,8 +78,8 @@ class UploadifyS3(object):
         
         self.post_data['policy'] = self.policy
         self.post_data['signature'] = _uri_encode(self.signature)
-        self.options['scriptData'] = self.post_data
-        # self.options['policyDebug'] = self.policy_string
+        self.options['formData'] = self.post_data
+        self.options['debug'] = settings.DEBUG
         
     def get_options_json(self):
         # return json.dumps(self.options)
@@ -145,7 +146,7 @@ def build_post_policy(expiration_time, conditions):
             
 def _uri_encode(str):
     try:
-        # The Uploadify flash component apparently decodes the scriptData once, so we need to encode twice here.
+        # The Uploadify flash component apparently decodes the formData once, so we need to encode twice here.
         return quote_plus(quote_plus(str, safe='~'), safe='~')
     except:
         raise ValueError
