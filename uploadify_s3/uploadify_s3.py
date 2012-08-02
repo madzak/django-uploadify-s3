@@ -43,8 +43,9 @@ class UploadifyS3(object):
         self.options = getattr(settings, 'UPLOADIFY_DEFAULT_OPTIONS', {})
         self.options.update(uploadify_options)
         
-        if any(True for key in self.options if key not in UPLOADIFY_OPTIONS + UPLOADIFY_METHODS):
-            raise ImproperlyConfigured("Attempted to initialize with unrecognized option '%s'." % key)
+        for key in self.options:
+            if key not in (UPLOADIFY_OPTIONS + UPLOADIFY_METHODS):
+                raise ImproperlyConfigured("Attempted to initialize with unrecognized option '%s'." % key)
 
         _set_default_if_none(self.options, 'swf', DEFAULT_SWF)
         _set_default_if_none(self.options, 'uploader', BUCKET_URL)
