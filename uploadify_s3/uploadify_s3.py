@@ -20,7 +20,7 @@ UPLOADIFY_METHODS = ('onCancel', 'onClearQueue', 'onDestroy', 'onDialogClose', '
 'onUploadSuccess')
 
 PASS_THRU_OPTIONS = ('folder', 'fileExt',)
-FILTERED_KEYS  = ('filename',)
+FILTERED_KEYS  = ('Filename',)
 EXCLUDED_KEYS     = ('AWSAccessKeyId', 'policy', 'signature')
 
 # AWS Options
@@ -78,7 +78,7 @@ class UploadifyS3(object):
         self.signature = base64.encodestring(hmac.new(SECRET_ACCESS_KEY, self.policy, hashlib.sha1).digest()).strip()
         
         self.post_data['policy'] = self.policy
-        self.post_data['signature'] = _uri_encode(self.signature)
+        self.post_data['signature'] = self.signature
         self.options['formData'] = self.post_data
         self.options['debug'] = settings.DEBUG
         
