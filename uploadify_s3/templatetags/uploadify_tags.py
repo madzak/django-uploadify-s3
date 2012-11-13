@@ -18,5 +18,6 @@ def uploadify_widget(options):
 @register.inclusion_tag('uploadify_upload.html')
 def uploadify_upload(css_classes=""):
     return {
+        'STATIC_URL': settings.STATIC_URL,
         'css_classes': css_classes,
     }
