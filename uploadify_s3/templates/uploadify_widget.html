@@ -3,7 +3,7 @@
     $(document).ready(function(){
         /* Uploadify Setup */
         $('#file_upload').uploadify(
-        {% autoescape off %}
+        {% autoescape off %} 
         {{ uploadify_options }}
         {% endautoescape %}
         );

@@ -4,8 +4,7 @@ from urllib import quote_plus
 from datetime import datetime
 from datetime import timedelta
 import base64
-import hmac
-import hashlib
+import hmac, sha
 import json
 
 UPLOADIFY_OPTIONS = ('auto', 'buttonClass', 'buttonCursor', 'buttonImage', 'buttonText',
@@ -20,8 +19,8 @@ UPLOADIFY_METHODS = ('onCancel', 'onClearQueue', 'onDestroy', 'onDialogClose', '
 'onUploadSuccess')
 
 PASS_THRU_OPTIONS = ('folder', 'fileExt',)
-FILTERED_KEYS  = ('Filename',)
-EXCLUDED_KEYS     = ('AWSAccessKeyId', 'policy', 'signature')
+FILTERED_KEYS  = ('Filename', 'key',)
+EXCLUDED_KEYS     = ('AWSAccessKeyId', 'policy', 'signature',)
 
 # AWS Options
 ACCESS_KEY_ID       = getattr(settings, 'UPLOADIFY_AWS_ACCESS_KEY_ID', None)
@@ -51,8 +50,7 @@ class UploadifyS3(object):
         _set_default_if_none(self.options, 'uploader', BUCKET_URL)
 
         self.post_data = post_data
-
-        _set_default_if_none(self.post_data, 'key', _uri_encode(DEFAULT_KEY_PATTERN))
+        _set_default_if_none(self.post_data, 'key', DEFAULT_KEY_PATTERN)
         _set_default_if_none(self.post_data, 'acl', DEFAULT_ACL)
         
         try:
@@ -72,15 +70,15 @@ class UploadifyS3(object):
         
         expiration_time = datetime.utcnow() + timedelta(seconds=DEFAULT_FORM_TIME)
         self.policy_string = build_post_policy(expiration_time, self.conditions)
-        
         self.policy = base64.b64encode(self.policy_string)
          
-        self.signature = base64.encodestring(hmac.new(SECRET_ACCESS_KEY, self.policy, hashlib.sha1).digest()).strip()
+        self.signature = base64.encodestring(hmac.new(SECRET_ACCESS_KEY, self.policy, sha).digest()).strip()
         
         self.post_data['policy'] = self.policy
         self.post_data['signature'] = self.signature
         self.options['formData'] = self.post_data
         self.options['debug'] = settings.DEBUG
+        self.options['fileObjName'] = 'file'
         
     def get_options_json(self):
         # return json.dumps(self.options)
